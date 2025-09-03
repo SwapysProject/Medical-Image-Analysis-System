@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Image Analysis System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-microscope"></i>
+                    <h1>Medical Image Analysis System</h1>
+                </div>
+                <p class="subtitle">Advanced Digital Pathology Analysis using OpenCV and Machine Learning</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <div class="upload-box" id="uploadBox">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Upload Medical Image</h3>
+                        <p>Drag & drop your image here or click to browse</p>
+                        <p class="file-info">Supported formats: PNG, JPG, JPEG, TIFF (Max: 100MB)</p>
+                        <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.tiff,.tif" hidden>
+                        <button type="button" class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Options -->
+            <div class="analysis-options" id="analysisOptions" style="display: none;">
+                <h3><i class="fas fa-cogs"></i> Analysis Settings</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="minCellSize">Minimum Cell Size (pixels)</label>
+                        <input type="number" id="minCellSize" value="50" min="10" max="500">
+                    </div>
+                    <div class="option-group">
+                        <label for="maxCellSize">Maximum Cell Size (pixels)</label>
+                        <input type="number" id="maxCellSize" value="5000" min="100" max="10000">
+                    </div>
+                    <div class="option-group">
+                        <label for="analysisType">Analysis Type</label>
+                        <select id="analysisType">
+                            <option value="comprehensive">Comprehensive Analysis</option>
+                            <option value="segmentation_only">Segmentation Only</option>
+                            <option value="classification_only">Classification Only</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" class="analyze-btn" id="analyzeBtn">
+                    <i class="fas fa-play"></i> Start Analysis
+                </button>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <h3><i class="fas fa-image"></i> Image Preview</h3>
+                <div class="image-preview">
+                    <img id="imagePreview" alt="Uploaded image preview">
+                    <div class="image-info" id="imageInfo"></div>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="progress-section" id="progressSection" style="display: none;">
+                <h3><i class="fas fa-spinner fa-spin"></i> Processing Image...</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-status" id="progressStatus">Initializing...</div>
+                <div class="processing-steps" id="processingSteps"></div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3><i class="fas fa-chart-bar"></i> Analysis Results</h3>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-eye"></i></div>
+                        <div class="card-content">
+                            <h4>Cells Detected</h4>
+                            <span class="card-value" id="cellCount">-</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-ruler-combined"></i></div>
+                        <div class="card-content">
+                            <h4>Average Cell Area</h4>
+                            <span class="card-value" id="avgArea">- px²</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-percentage"></i></div>
+                        <div class="card-content">
+                            <h4>Classification Confidence</h4>
+                            <span class="card-value" id="confidence">-%</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-medal"></i></div>
+                        <div class="card-content">
+                            <h4>Quality Score</h4>
+                            <span class="card-value" id="qualityScore">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualization Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="showTab('original')">Original</button>
+                    <button class="tab-btn" onclick="showTab('segmented')">Segmented</button>
+                    <button class="tab-btn" onclick="showTab('overlay')">Classification Overlay</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="original" class="tab-pane active">
+                        <img id="originalImage" alt="Original image" class="result-image">
+                    </div>
+                    <div id="segmented" class="tab-pane">
+                        <img id="segmentedImage" alt="Segmented image" class="result-image">
+                    </div>
+                    <div id="overlay" class="tab-pane">
+                        <img id="overlayImage" alt="Classification overlay" class="result-image">
+                    </div>
+                </div>
+
+                <!-- Detailed Results -->
+                <div class="detailed-results">
+                    <h4>Detailed Analysis</h4>
+                    <div class="results-grid">
+                        <div class="result-panel">
+                            <h5>Classification Summary</h5>
+                            <div id="classificationSummary"></div>
+                        </div>
+                        <div class="result-panel">
+                            <h5>Morphological Analysis</h5>
+                            <div id="morphologicalAnalysis"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Options -->
+                <div class="download-section">
+                    <h4>Download Results</h4>
+                    <div class="download-buttons">
+                        <button class="download-btn" id="downloadJson">
+                            <i class="fas fa-file-code"></i> JSON Report
+                        </button>
+                        <button class="download-btn" id="downloadCsv">
+                            <i class="fas fa-file-csv"></i> CSV Data
+                        </button>
+                        <button class="download-btn" id="downloadImages">
+                            <i class="fas fa-images"></i> Images
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Section -->
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle error-icon"></i>
+                    <h3>Analysis Error</h3>
+                    <p id="errorMessage">An error occurred during analysis.</p>
+                    <button class="retry-btn" onclick="resetAnalysis()">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Medical Image Analysis System. Built with OpenCV and Machine Learning.</p>
+            <p>Advanced Digital Pathology • Cell Segmentation • Feature Analysis • Classification</p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Processing your medical image...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
