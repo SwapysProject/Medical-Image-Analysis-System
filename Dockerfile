@@ -6,14 +6,13 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Install system dependencies for OpenCV and medical imaging
-RUN apt-get update && apt-get install -y \
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender-dev \
     libgomp1 \
-    libglib2.0-0 \
-    libgl1-mesa-glx \
+    libgl1 \
     libgthread-2.0-0 \
     libgtk-3-0 \
     python3-tk \
