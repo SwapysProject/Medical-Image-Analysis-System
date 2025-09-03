@@ -1,10 +1,10 @@
 # Medical Image Analysis System
 
-## ðŸ”¬ Advanced Digital Pathology Analysis Platform
+## Advanced Digital Pathology Analysis Platform
 
 A comprehensive medical image analysis system built with OpenCV, machine learning, and Flask, designed specifically for digital pathology applications. This project implements advanced cell segmentation, feature extraction, and classification algorithms optimized for high-resolution medical images.
 
-### ðŸŽ¯ Project Overview
+### Project Overview
 
 This system addresses the growing need for automated analysis in digital pathology, providing:
 - **Cell Segmentation**: Advanced watershed-based algorithm for separating overlapping cells
@@ -14,7 +14,7 @@ This system addresses the growing need for automated analysis in digital patholo
 - **High-Resolution Support**: Optimized for large medical images (up to 50K Ã— 50K pixels)
 - **Web Interface**: User-friendly interface for easy analysis and result visualization
 
-### ðŸ¥ Medical Applications
+### Medical Applications
 
 - Digital pathology image analysis
 - Cell counting and morphometry
@@ -23,7 +23,7 @@ This system addresses the growing need for automated analysis in digital patholo
 - Drug discovery research
 - Clinical diagnosis support
 
-## ðŸš€ Quick Start
+## Quick Start
 
 ### Using Docker (Recommended)
 
@@ -64,7 +64,7 @@ This system addresses the growing need for automated analysis in digital patholo
 
 4. **Access at** `http://localhost:5000`
 
-## ðŸ—ï¸ System Architecture
+## System Architecture
 
 ### Core Components
 
@@ -124,37 +124,37 @@ medical_image_analyzer/
 
 ## ðŸ“Š Features
 
-### ðŸ” Advanced Segmentation
+### Advanced Segmentation
 - **Watershed Algorithm**: Marker-controlled segmentation for overlapping cells
 - **Quality Filtering**: Morphological validation of detected cells
 - **Large Image Support**: Tile-based processing for high-resolution images
 - **Artifact Removal**: Automatic detection and correction of common artifacts
 
-### ðŸ§¬ Comprehensive Feature Extraction
+### Comprehensive Feature Extraction
 - **Morphological Features**: Area, perimeter, circularity, solidity, aspect ratio
 - **Texture Analysis**: Local Binary Patterns (LBP), Gray-Level Co-occurrence Matrix (GLCM)
 - **Intensity Features**: Statistical measures, percentiles, distribution analysis
 - **Shape Descriptors**: Hu moments, convexity defects, geometric properties
 
-### ðŸ¤– Intelligent Classification
+### Intelligent Classification
 - **Multiple Algorithms**: Random Forest, SVM, Gradient Boosting
 - **Rule-Based Fallback**: Hand-crafted rules when no trained model available
 - **Confidence Scoring**: Probability estimates for each classification
 - **Adaptive Learning**: Support for custom training data
 
-### ðŸ“ˆ Quantitative Analysis
+### Quantitative Analysis
 - **Statistical Reports**: Comprehensive analysis of cell populations
 - **Spatial Analysis**: Distribution patterns and clustering metrics
 - **Quality Metrics**: Assessment of segmentation and classification quality
 - **Export Options**: JSON, CSV, and image downloads
 
-### ðŸŒ Web Interface
+### Web Interface
 - **Drag-and-Drop Upload**: Easy file handling
 - **Real-Time Progress**: Analysis progress tracking
 - **Interactive Visualization**: Tabbed result display
 - **Responsive Design**: Mobile-friendly interface
 
-## ðŸ”§ Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -188,7 +188,7 @@ LOG_FILE=medical_analysis.log
 - **Supported Formats**: PNG, JPG, JPEG, TIFF
 - **Maximum File Size**: 100MB
 
-## ðŸ“± Usage Examples
+## Usage Examples
 
 ### Basic Analysis
 1. Open the web interface
@@ -235,7 +235,7 @@ def analyze_directory(image_dir, output_dir):
 analyze_directory("./medical_images", "./analysis_results")
 ```
 
-## ðŸ§ª Testing
+## Testing
 
 Run the test suite:
 ```bash
@@ -247,7 +247,7 @@ Run with coverage:
 pytest tests/ --cov=. --cov-report=html
 ```
 
-## ðŸ“ˆ Performance Optimization
+## Performance Optimization
 
 ### For Large Images (>10K Ã— 10K pixels)
 - Use tile-based processing
@@ -260,7 +260,7 @@ pytest tests/ --cov=. --cov-report=html
 - Automatic cleanup of temporary files
 - Configurable timeout settings for long-running analyses
 
-## ðŸ› Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -284,7 +284,7 @@ pytest tests/ --cov=. --cov-report=html
    - Check port availability (5000)
    - Verify file permissions for volume mounts
 
-## ðŸ¤ Contributing
+## Contributing
 
 We welcome contributions! Please follow these guidelines:
 
@@ -308,25 +308,25 @@ flake8 . --max-line-length 88
 pytest tests/
 ```
 
-## ðŸ“„ License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ðŸ™ Acknowledgments
+## Acknowledgments
 
 - OpenCV community for computer vision tools
 - scikit-image for advanced image processing algorithms
 - Flask community for the web framework
  
 
-## ðŸ“ž Support
+## Support
 
 For questions, issues, or contributions:
 - Create an issue on GitHub
 - Check the documentation
 - Review existing issues and discussions
 
-## ðŸš€ Future Enhancements
+## Future Enhancements
 
 - [ ] Deep learning model integration
 - [ ] Real-time analysis streaming
@@ -341,6 +341,6 @@ For questions, issues, or contributions:
 
 ---
 
-**Built with â¤ï¸ for the medical imaging community**
+**Built for the medical imaging community**
 
 *This system represents a comprehensive solution for digital pathology analysis, combining state-of-the-art computer vision techniques with practical deployment considerations for real-world medical applications.*

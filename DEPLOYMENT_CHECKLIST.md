@@ -1,6 +1,6 @@
-# ðŸš€ Medical Image Analysis System - Deployment Checklist
+# Medical Image Analysis System - Deployment Checklist
 
-## âœ… Pre-Deployment Checklist
+## Pre-Deployment Checklist
 
 ### System Requirements
 - [ ] Python 3.7+ installed
@@ -21,7 +21,7 @@
 - [ ] Configure logging levels
 - [ ] Set worker counts based on system resources
 
-## ðŸ³ Docker Deployment (Recommended)
+## Docker Deployment (Recommended)
 
 ### Quick Start
 ```bash
@@ -48,7 +48,7 @@ docker-compose logs -f medical-analyzer
 docker-compose up --scale medical-analyzer=2
 ```
 
-## ðŸ”§ Manual Deployment
+## Manual Deployment
 
 ### Local Development
 ```bash
@@ -74,7 +74,7 @@ chmod +x run.sh
 ./run.sh
 ```
 
-## ðŸ§ª Testing & Validation
+## Testing & Validation
 
 ### Run Test Suite
 ```bash
@@ -94,7 +94,7 @@ python -m pytest tests/test_segmentation.py::TestCellSegmentation::test_segmenta
 - [ ] Download results - should generate proper files
 - [ ] Check logs for errors
 
-## ðŸ“Š Performance Monitoring
+## Performance Monitoring
 
 ### Key Metrics to Monitor
 - Memory usage (especially during large image processing)
@@ -110,7 +110,7 @@ python -m pytest tests/test_segmentation.py::TestCellSegmentation::test_segmenta
 - Implement image compression for large files
 - Add Redis for caching if processing many similar images
 
-## ðŸ”’ Security Considerations
+## Security Considerations
 
 ### Production Security
 - [ ] Change default SECRET_KEY
@@ -125,35 +125,35 @@ python -m pytest tests/test_segmentation.py::TestCellSegmentation::test_segmenta
 - [ ] Implement user authentication if needed
 - [ ] Regular cleanup of temporary files
 
-## ðŸ“ Directory Structure
+## Directory Structure
 ```
 medical-image-analyzer/
-â”œâ”€â”€ ðŸ app.py                    # Main Flask application
-â”œâ”€â”€ âš™ï¸  config.py                # Configuration settings
-â”œâ”€â”€ ðŸ“‹ requirements.txt          # Python dependencies
-â”œâ”€â”€ ðŸ³ Dockerfile               # Container configuration
-â”œâ”€â”€ ðŸ³ docker-compose.yml       # Multi-container setup
-â”œâ”€â”€ ðŸš€ run.sh                   # Quick start script
-â”œâ”€â”€ ðŸ“š README.md                # Documentation
-â”œâ”€â”€ ðŸ§ª tests/                   # Test suite
-â”œâ”€â”€ ðŸ§  models/                  # Analysis models
-â”‚   â”œâ”€â”€ cell_segmentation.py
-â”‚   â”œâ”€â”€ feature_extractor.py
-â”‚   â””â”€â”€ classifier.py
-â”œâ”€â”€ ðŸ”§ utils/                   # Utility modules
-â”‚   â”œâ”€â”€ image_preprocessing.py
-â”‚   â””â”€â”€ postprocessing.py
-â”œâ”€â”€ ðŸŒ templates/               # Web templates
-â”‚   â””â”€â”€ index.html
-â”œâ”€â”€ ðŸŽ¨ static/                  # Static assets
-â”‚   â”œâ”€â”€ css/style.css
-â”‚   â””â”€â”€ js/main.js
-â”œâ”€â”€ ðŸ“¤ uploads/                 # User uploads (auto-created)
-â”œâ”€â”€ ðŸ“¥ outputs/                 # Analysis results (auto-created)
-â””â”€â”€ ðŸ“Š data/                    # Sample data (optional)
+├── app.py                    # Main Flask application
+├── config.py                 # Configuration settings
+├── requirements.txt          # Python dependencies
+├── Dockerfile                # Container configuration
+├── docker-compose.yml        # Multi-container setup
+├── run.sh                    # Quick start script
+├── README.md                 # Documentation
+├── tests/                    # Test suite
+├── models/                   # Analysis models
+│   ├── cell_segmentation.py
+│   ├── feature_extractor.py
+│   └── classifier.py
+├── utils/                    # Utility modules
+│   ├── image_preprocessing.py
+│   └── postprocessing.py
+├── templates/                # Web templates
+│   └── index.html
+├── static/                   # Static assets
+│   ├── css/style.css
+│   └── js/main.js
+├── uploads/                  # User uploads (auto-created)
+├── outputs/                  # Analysis results (auto-created)
+└── data/                     # Sample data (optional)
 ```
 
-## ðŸŒ Accessing the Application
+## Accessing the Application
 
 ### Local Access
 - **URL**: http://localhost:5000
@@ -161,15 +161,15 @@ medical-image-analyzer/
 - **API Documentation**: Available through web interface
 
 ### Features Available
-- âœ¨ Drag-and-drop image upload
-- ðŸ”¬ Advanced cell segmentation
-- ðŸ“Š Comprehensive feature extraction
-- ðŸ¤– ML-based classification
-- ðŸ“ˆ Statistical analysis and reporting
-- ðŸ’¾ Multiple export formats (JSON, CSV, Images)
-- ðŸ“± Responsive web interface
+- Drag-and-drop image upload
+- Advanced cell segmentation
+- Comprehensive feature extraction
+- ML-based classification
+- Statistical analysis and reporting
+- Multiple export formats (JSON, CSV, Images)
+- Responsive web interface
 
-## ðŸ› Troubleshooting
+## Troubleshooting
 
 ### Common Issues and Solutions
 
@@ -206,7 +206,7 @@ docker system prune -a
 docker-compose logs medical-analyzer
 ```
 
-## ðŸ“ž Support & Maintenance
+## Support & Maintenance
 
 ### Regular Maintenance
 - [ ] Monitor disk space in uploads/outputs directories
@@ -221,7 +221,7 @@ docker-compose logs medical-analyzer
 3. Check logs for error messages
 4. Create GitHub issues for bugs or feature requests
 
-## ðŸŽ¯ Success Criteria
+## Success Criteria
 
 ### Deployment is successful when:
 - [x] Application starts without errors
@@ -234,6 +234,6 @@ docker-compose logs medical-analyzer
 
 ---
 
-**ðŸŽ‰ Congratulations! Your Medical Image Analysis System is ready for deployment!**
+**Congratulations! Your Medical Image Analysis System is ready for deployment!**
 
 *This system represents a complete solution for digital pathology analysis, combining advanced computer vision techniques with practical deployment considerations for real-world medical applications.*
