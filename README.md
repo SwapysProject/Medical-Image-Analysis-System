@@ -70,30 +70,25 @@ This system addresses the growing need for automated analysis in digital patholo
 
 ```
 medical_image_analyzer/
-â”œâ”€â”€ app.py                     # Main Flask application
-â”œâ”€â”€ config.py                  # Configuration settings
-â”œâ”€â”€ requirements.txt           # Python dependencies
-â”œâ”€â”€ Dockerfile                 # Container configuration
-â”œâ”€â”€ docker-compose.yml         # Multi-container setup
-â”‚
-â”œâ”€â”€ models/                    # Analysis models
-â”‚   â”œâ”€â”€ cell_segmentation.py   # Watershed-based segmentation
-â”‚   â”œâ”€â”€ feature_extractor.py   # Feature extraction algorithms
-â”‚   â””â”€â”€ classifier.py          # ML classification models
-â”‚
-â”œâ”€â”€ utils/                     # Utility modules
-â”‚   â”œâ”€â”€ image_preprocessing.py  # Image enhancement and preprocessing
-â”‚   â””â”€â”€ postprocessing.py      # Result analysis and reporting
-â”‚
-â”œâ”€â”€ templates/                 # Web templates
-â”‚   â””â”€â”€ index.html            # Main user interface
-â”‚
-â”œâ”€â”€ static/                    # Static web assets
-â”‚   â”œâ”€â”€ css/style.css         # Professional styling
-â”‚   â””â”€â”€ js/main.js            # Frontend JavaScript
-â”‚
-â””â”€â”€ tests/                     # Test suite
-    â””â”€â”€ test_segmentation.py   # Unit tests
+   app.py                  # Main Flask application
+   config.py               # Configuration settings
+   requirements.txt        # Python dependencies
+   Dockerfile              # Container configuration
+   docker-compose.yml      # Multi-container setup
+   models/                 # Analysis models
+      cell_segmentation.py  # Watershed-based segmentation
+      feature_extractor.py  # Feature extraction algorithms
+      classifier.py         # ML classification models
+   utils/                  # Utility modules
+      image_preprocessing.py# Image enhancement and preprocessing
+      postprocessing.py     # Result analysis and reporting
+   templates/              # Web templates
+      index.html            # Main user interface
+   static/                 # Static web assets
+      css/style.css         # Professional styling
+      js/main.js            # Frontend JavaScript
+   tests/                  # Test suite
+      test_segmentation.py  # Unit tests
 ```
 
 ### Analysis Pipeline
@@ -122,7 +117,7 @@ medical_image_analyzer/
    - Spatial distribution analysis
    - Statistical reporting
 
-## ðŸ“Š Features
+## Features
 
 ### Advanced Segmentation
 - **Watershed Algorithm**: Marker-controlled segmentation for overlapping cells
