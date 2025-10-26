@@ -94,9 +94,9 @@ def process_medical_image(filepath, filename):
     original_shape = image.shape
     preprocessed_image = preprocessor.enhance_image(image)
 
-    # Step 2: Cell segmentation
+    # Step 2: Cell segmentation (use original image, not preprocessed)
     results['processing_steps'].append('Performing cell segmentation...')
-    segmented_image, cell_masks, cell_contours = segmentation_model.segment_cells(preprocessed_image)
+    segmented_image, cell_masks, cell_contours = segmentation_model.segment_cells(image)
 
     # Step 3: Feature extraction
     results['processing_steps'].append('Extracting cellular features...')

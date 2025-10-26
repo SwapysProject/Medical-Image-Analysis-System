@@ -60,26 +60,21 @@ class ImagePreprocessor:
 
     def _convert_color_space(self, image):
         """
-        Convert to optimal color space for cell segmentation
-        Uses LAB color space which often provides better cell-background separation
+        Convert to optimal color space for fluorescence microscopy.
+        Preserves color information instead of converting to single channel.
         """
         if len(image.shape) == 3:
-            # Convert BGR to LAB
+            # For fluorescence images, convert to LAB and enhance
             lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
-
-            # Extract channels
-            l_channel, a_channel, b_channel = cv2.split(lab)
-
-            # A channel often provides best cell contrast in pathology images
-            # But we can also experiment with other combinations
-
-            # Option 1: Use A channel (green-red component)
-            enhanced = a_channel
-
-            # Option 2: Combine channels for better contrast
-            # You can uncomment this for different results
-            # enhanced = cv2.addWeighted(a_channel, 0.7, b_channel, 0.3, 0)
-
+            l, a, b = cv2.split(lab)
+            
+            # Apply CLAHE to L channel only
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+            l = clahe.apply(l)
+            
+            # Merge back
+            enhanced_lab = cv2.merge([l, a, b])
+            enhanced = cv2.cvtColor(enhanced_lab, cv2.COLOR_LAB2BGR)
         else:
             # Already grayscale
             enhanced = image.copy()

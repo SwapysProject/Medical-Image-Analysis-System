@@ -23,9 +23,8 @@ class CellClassifier:
         self.model_type = model_type
         self.model = None
         self.scaler = None
-        """
-        Cell Classifier for Medical Image Analysis
-        """
+        self.logger = logging.getLogger(__name__)
+        self.is_trained = False
 
         # Initialize model based on type
         self._initialize_model()

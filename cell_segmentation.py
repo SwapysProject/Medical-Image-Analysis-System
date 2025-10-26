@@ -16,7 +16,7 @@ class CellSegmentationModel:
     Designed for high-resolution digital pathology images (~50K x 50K)
     """
 
-    def __init__(self, min_cell_area=50, max_cell_area=5000):
+    def __init__(self, min_cell_area=100, max_cell_area=50000):
         self.min_cell_area = min_cell_area
         self.max_cell_area = max_cell_area
         self.logger = logging.getLogger(__name__)
@@ -52,36 +52,36 @@ class CellSegmentationModel:
 
     def _preprocess_image(self, image):
         """
-        Advanced preprocessing for medical images including:
-        - Color space conversion for better cell visibility
-        - Noise reduction while preserving cell boundaries
-        - Contrast enhancement for improved segmentation
+        Advanced preprocessing for fluorescence microscopy images.
+        Optimized for images with fluorescent staining (nuclei, membranes).
         """
-        # Convert to LAB color space for better cell separation
-        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
-
-        # Use A channel which often shows good cell contrast
-        a_channel = lab[:, :, 1]
-
-        # Apply median blur to reduce noise while preserving edges
-        denoised = cv2.medianBlur(a_channel, 3)
-
-        # Enhance contrast using CLAHE (Contrast Limited Adaptive Histogram Equalization)
-        clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
-        enhanced = clahe.apply(denoised)
-
-        # Gaussian blur for smoother segmentation
-        blurred = cv2.GaussianBlur(enhanced, (5, 5), 0)
+        # Ensure image is in BGR format
+        if len(image.shape) == 2:
+            image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+        
+        # Split into channels (B, G, R) for fluorescence analysis
+        blue_channel, green_channel, red_channel = cv2.split(image)
+        
+        # Use blue channel (typically nuclei/DAPI staining) for segmentation
+        nuclei = blue_channel.copy()
+        
+        # Apply Gaussian blur to reduce noise
+        blurred = cv2.GaussianBlur(nuclei, (5, 5), 0)
 
         return blurred
 
     def _generate_markers(self, image):
         """
-        Generate markers for marker-controlled watershed segmentation
-        This is crucial for separating touching/overlapping cells
+        Generate markers for marker-controlled watershed segmentation.
+        Optimized for fluorescence microscopy with adaptive thresholding.
         """
-        # Otsu thresholding to separate foreground from background
-        _, binary = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        # Use adaptive thresholding instead of Otsu for fluorescence images
+        binary = cv2.adaptiveThreshold(
+            image, 255, 
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+            cv2.THRESH_BINARY, 
+            11, 2
+        )
 
         # Morphological operations to clean up the binary image
         kernel = np.ones((3, 3), np.uint8)
@@ -89,23 +89,22 @@ class CellSegmentationModel:
         # Remove noise
         opening = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel, iterations=2)
 
-        # Sure background area
-        sure_bg = cv2.dilate(opening, kernel, iterations=3)
-
         # Finding sure foreground area using distance transform
         dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
 
-        # Use adaptive threshold for distance transform to handle varying cell sizes
-        max_dist = np.max(dist_transform)
-        threshold_ratio = 0.4  # Adjustable parameter
-        _, sure_fg = cv2.threshold(dist_transform, threshold_ratio * max_dist, 255, 0)
+        # Use lower threshold for fluorescence images (0.2 instead of 0.4)
+        threshold_ratio = 0.2  # Lower threshold detects more cells
+        _, sure_fg = cv2.threshold(dist_transform, threshold_ratio * dist_transform.max(), 255, 0)
+        sure_fg = np.uint8(sure_fg)
+
+        # Sure background area
+        sure_bg = cv2.dilate(opening, kernel, iterations=3)
 
         # Find unknown region (boundary between cells)
-        sure_fg = np.uint8(sure_fg)
         unknown = cv2.subtract(sure_bg, sure_fg)
 
         # Create markers for watershed
-        _, markers = cv2.connectedComponents(sure_fg)
+        num_labels, markers = cv2.connectedComponents(sure_fg)
 
         # Add background marker
         markers = markers + 1
@@ -117,13 +116,17 @@ class CellSegmentationModel:
 
     def _apply_watershed(self, image, markers):
         """
-        Apply watershed algorithm with generated markers
+        Apply watershed algorithm with generated markers.
+        Handles both grayscale and color images.
         """
-        # Convert single channel to 3-channel for watershed
-        image_3ch = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+        # Convert single channel to 3-channel for watershed if needed
+        if len(image.shape) == 2:
+            image_3ch = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+        else:
+            image_3ch = image
 
         # Apply watershed
-        labels = watershed(-image, markers, mask=None)
+        labels = cv2.watershed(image_3ch, markers)
 
         return labels
 
@@ -134,16 +137,16 @@ class CellSegmentationModel:
         cell_masks = []
         cell_contours = []
 
-        # Get unique labels (excluding background)
+        # Get unique labels (excluding background and borders)
         unique_labels = np.unique(labels)
-        unique_labels = unique_labels[unique_labels > 1]  # Exclude 0 (boundaries) and 1 (background)
+        unique_labels = unique_labels[(unique_labels > 1) & (unique_labels != -1)]  # Exclude 0, 1, and -1 (borders)
 
         for label in unique_labels:
             # Create mask for current cell
-            mask = (labels == label).astype(np.uint8)
+            mask = (labels == label).astype(np.uint8) * 255
 
             # Calculate cell area
-            cell_area = np.sum(mask)
+            cell_area = np.sum(mask > 0)
 
             # Filter by area - remove cells that are too small or too large
             if self.min_cell_area <= cell_area <= self.max_cell_area:
@@ -159,6 +162,7 @@ class CellSegmentationModel:
                         cell_masks.append(mask)
                         cell_contours.append(largest_contour)
 
+        self.logger.info(f"Extracted {len(cell_masks)} valid cells from {len(unique_labels)} detected regions")
         return cell_masks, cell_contours
 
     def _is_valid_cell(self, contour, mask):
@@ -188,29 +192,23 @@ class CellSegmentationModel:
 
     def _create_segmentation_visualization(self, original_image, cell_masks):
         """
-        Create a colorized visualization of the segmentation results
+        Create a colorized visualization of the segmentation results.
+        Optimized for fluorescence images with yellow contours for visibility.
         """
         # Create overlay on original image
         visualization = original_image.copy()
+        
+        # Ensure visualization is in color
+        if len(visualization.shape) == 2:
+            visualization = cv2.cvtColor(visualization, cv2.COLOR_GRAY2BGR)
 
-        # Generate random colors for each cell
-        colors = []
-        for i in range(len(cell_masks)):
-            color = tuple(np.random.randint(50, 255, 3).tolist())
-            colors.append(color)
-
-        # Draw each cell with a unique color
+        # Draw each cell with yellow/cyan contours (more visible on fluorescence)
         for i, mask in enumerate(cell_masks):
             # Find contours
             contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            # Draw filled contour with transparency
-            overlay = visualization.copy()
-            cv2.fillPoly(overlay, contours, colors[i])
-            visualization = cv2.addWeighted(visualization, 0.7, overlay, 0.3, 0)
-
-            # Draw contour boundary
-            cv2.drawContours(visualization, contours, -1, colors[i], 2)
+            # Draw contour boundary in yellow/cyan
+            cv2.drawContours(visualization, contours, -1, (0, 255, 255), 2)
 
             # Add cell number
             if contours:
@@ -219,7 +217,7 @@ class CellSegmentationModel:
                     cx = int(M["m10"] / M["m00"])
                     cy = int(M["m01"] / M["m00"])
                     cv2.putText(visualization, str(i+1), (cx-10, cy+5), 
-                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
         return visualization
 
